@@ -1188,3 +1188,19 @@ class UnixConfigLexer(RegexLexer):
             (r'[^:\n]+', String),
         ],
     }
+
+class HoconLexer(RegexLexer):
+    """
+    Lexer for Human-Optimized Config Object Notation (HOCON) files
+
+    Spec: https://github.com/lightbend/config/blob/main/HOCON.md
+    """
+    name = 'Human-Optimized Config Object Notation'
+    aliases = ['hocon']
+    filenames = []
+
+    tokens = {
+        'root': [
+            (r'(#|/{2}).*$', Comment)
+        ]
+    }
