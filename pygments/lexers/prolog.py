@@ -4,7 +4,7 @@
 
     Lexers for Prolog and Prolog-like languages.
 
-    :copyright: Copyright 2006-2023 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2024 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -25,6 +25,8 @@ class PrologLexer(RegexLexer):
     aliases = ['prolog']
     filenames = ['*.ecl', '*.prolog', '*.pro', '*.pl']
     mimetypes = ['text/x-prolog']
+    url = 'https://en.wikipedia.org/wiki/Prolog'
+    version_added = ''
 
     tokens = {
         'root': [
@@ -78,14 +80,17 @@ class PrologLexer(RegexLexer):
     }
 
     def analyse_text(text):
-        return ':-' in text
+        """Competes with IDL and Visual Prolog on *.pro"""
+        if ':-' in text:
+            # Visual Prolog also uses :-
+            return 0.5
+        else:
+            return 0
 
 
 class LogtalkLexer(RegexLexer):
     """
     For Logtalk source code.
-
-    .. versionadded:: 0.10
     """
 
     name = 'Logtalk'
@@ -93,6 +98,7 @@ class LogtalkLexer(RegexLexer):
     aliases = ['logtalk']
     filenames = ['*.lgt', '*.logtalk']
     mimetypes = ['text/x-logtalk']
+    version_added = '0.10'
 
     tokens = {
         'root': [

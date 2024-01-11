@@ -4,7 +4,7 @@
 
     Lexers for the ThingsDB language.
 
-    :copyright: Copyright 2006-2023 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2024 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -18,12 +18,12 @@ __all__ = ['ThingsDBLexer']
 class ThingsDBLexer(RegexLexer):
     """
     Lexer for the ThingsDB programming language.
-
-    .. versionadded:: 2.9
     """
     name = 'ThingsDB'
     aliases = ['ti', 'thingsdb']
     filenames = ['*.ti']
+    url = 'https://www.thingsdb.net'
+    version_added = '2.9'
 
     tokens = {
         'root': [

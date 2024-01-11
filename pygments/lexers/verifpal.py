@@ -4,14 +4,13 @@
 
     Lexers for Verifpal languages.
 
-    :copyright: Copyright 2006-2023 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2024 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
-import re
-
-from pygments.lexer import RegexLexer, include, words, bygroups, default
-from pygments.token import Text, Comment, Operator, Keyword, Name, String, Punctuation, Whitespace
+from pygments.lexer import RegexLexer, words, bygroups, default
+from pygments.token import Comment, Keyword, Name, String, Punctuation, \
+    Whitespace
 
 __all__ = ['VerifpalLexer']
 
@@ -19,8 +18,6 @@ __all__ = ['VerifpalLexer']
 class VerifpalLexer(RegexLexer):
     """
     For Verifpal code.
-
-    .. versionadded:: 2.16.0
     """
 
     name = 'Verifpal'
@@ -28,6 +25,7 @@ class VerifpalLexer(RegexLexer):
     filenames = ['*.vp']
     mimetypes = ['text/x-verifpal']
     url = 'https://verifpal.com'
+    version_added = '2.16'
 
     tokens = {
         'root': [

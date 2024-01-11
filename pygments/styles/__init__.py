@@ -4,64 +4,21 @@
 
     Contains built-in styles.
 
-    :copyright: Copyright 2006-2023 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2024 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
 from pygments.plugin import find_plugin_styles
 from pygments.util import ClassNotFound
+from pygments.styles._mapping import STYLES
 
 #: A dictionary of built-in styles, mapping style names to
 #: ``'submodule::classname'`` strings.
-STYLE_MAP = {
-    'abap': 'abap::AbapStyle',
-    'algol': 'algol::AlgolStyle',
-    'algol_nu': 'algol_nu::Algol_NuStyle',
-    'arduino': 'arduino::ArduinoStyle',
-    'autumn': 'autumn::AutumnStyle',
-    'bw': 'bw::BlackWhiteStyle',
-    'borland': 'borland::BorlandStyle',
-    'colorful': 'colorful::ColorfulStyle',
-    'default': 'default::DefaultStyle',
-    'dracula': 'dracula::DraculaStyle',
-    'emacs': 'emacs::EmacsStyle',
-    'fruity': 'fruity::FruityStyle',
-    'friendly': 'friendly::FriendlyStyle',
-    'friendly_grayscale': 'friendly_grayscale::FriendlyGrayscaleStyle',
-    'github-dark': 'gh_dark::GhDarkStyle',
-    'gruvbox-dark': 'gruvbox::GruvboxDarkStyle',
-    'gruvbox-light': 'gruvbox::GruvboxLightStyle',
-    'igor': 'igor::IgorStyle',
-    'inkpot': 'inkpot::InkPotStyle',
-    'lilypond': 'lilypond::LilyPondStyle',
-    'lovelace': 'lovelace::LovelaceStyle',
-    'manni': 'manni::ManniStyle',
-    'material': 'material::MaterialStyle',
-    'monokai': 'monokai::MonokaiStyle',
-    'murphy': 'murphy::MurphyStyle',
-    'nord': 'nord::NordStyle',
-    'nord-darker': 'nord::NordDarkerStyle',
-    'one-dark': 'onedark::OneDarkStyle',
-    'paraiso-dark': 'paraiso_dark::ParaisoDarkStyle',
-    'paraiso-light': 'paraiso_light::ParaisoLightStyle',
-    'pastie': 'pastie::PastieStyle',
-    'perldoc': 'perldoc::PerldocStyle',
-    'rainbow_dash': 'rainbow_dash::RainbowDashStyle',
-    'rrt': 'rrt::RrtStyle',
-    'sas': 'sas::SasStyle',
-    'solarized-dark': 'solarized::SolarizedDarkStyle',
-    'solarized-light': 'solarized::SolarizedLightStyle',
-    'staroffice': 'staroffice::StarofficeStyle',
-    'stata': 'stata_light::StataLightStyle',
-    'stata-dark': 'stata_dark::StataDarkStyle',
-    'stata-light': 'stata_light::StataLightStyle',
-    'tango': 'tango::TangoStyle',
-    'trac': 'trac::TracStyle',
-    'vim': 'vim::VimStyle',
-    'vs': 'vs::VisualStudioStyle',
-    'xcode': 'xcode::XcodeStyle',
-    'zenburn': 'zenburn::ZenburnStyle'
-}
+#: This list is deprecated. Use `pygments.styles.STYLES` instead
+STYLE_MAP = {v[1]: v[0].split('.')[-1] + '::' + k for k, v in STYLES.items()}
+
+#: Internal reverse mapping to make `get_style_by_name` more efficient
+_STYLE_NAME_TO_MODULE_MAP = {v[1]: (v[0], k) for k, v in STYLES.items()}
 
 
 def get_style_by_name(name):
@@ -72,8 +29,8 @@ def get_style_by_name(name):
     Will raise :exc:`pygments.util.ClassNotFound` if no style of that name is
     found.
     """
-    if name in STYLE_MAP:
-        mod, cls = STYLE_MAP[name].split('::')
+    if name in _STYLE_NAME_TO_MODULE_MAP:
+        mod, cls = _STYLE_NAME_TO_MODULE_MAP[name]
         builtin = "yes"
     else:
         for found_name, style in find_plugin_styles():
@@ -81,14 +38,15 @@ def get_style_by_name(name):
                 return style
         # perhaps it got dropped into our styles package
         builtin = ""
-        mod = name
+        mod = 'pygments.styles.' + name
         cls = name.title() + "Style"
 
     try:
-        mod = __import__('pygments.styles.' + mod, None, None, [cls])
+        mod = __import__(mod, None, None, [cls])
     except ImportError:
         raise ClassNotFound("Could not find style module %r" % mod +
-                         (builtin and ", though it should be builtin") + ".")
+                            (builtin and ", though it should be builtin")
+                            + ".")
     try:
         return getattr(mod, cls)
     except AttributeError:
@@ -97,6 +55,7 @@ def get_style_by_name(name):
 
 def get_all_styles():
     """Return a generator for all styles by name, both builtin and plugin."""
-    yield from STYLE_MAP
+    for v in STYLES.values():
+        yield v[1]
     for name, _ in find_plugin_styles():
         yield name

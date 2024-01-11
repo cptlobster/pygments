@@ -4,7 +4,7 @@
 
     Lexer for Macaulay2.
 
-    :copyright: Copyright 2006-2023 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2024 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -1719,9 +1719,10 @@ class Macaulay2Lexer(RegexLexer):
     """Lexer for Macaulay2, a software system for research in algebraic geometry."""
 
     name = 'Macaulay2'
-    url = 'https://faculty.math.illinois.edu/Macaulay2/'
+    url = 'https://macaulay2.com/'
     aliases = ['macaulay2']
     filenames = ['*.m2']
+    version_added = ''
 
     tokens = {
         'root': [

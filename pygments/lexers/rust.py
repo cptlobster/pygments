@@ -4,7 +4,7 @@
 
     Lexers for the Rust language.
 
-    :copyright: Copyright 2006-2023 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2024 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -18,14 +18,13 @@ __all__ = ['RustLexer']
 class RustLexer(RegexLexer):
     """
     Lexer for the Rust programming language (version 1.47).
-
-    .. versionadded:: 1.6
     """
     name = 'Rust'
     url = 'https://www.rust-lang.org/'
     filenames = ['*.rs', '*.rs.in']
     aliases = ['rust', 'rs']
     mimetypes = ['text/rust', 'text/x-rust']
+    version_added = '1.6'
 
     keyword_types = (words((
         'u8', 'u16', 'u32', 'u64', 'u128', 'i8', 'i16', 'i32', 'i64', 'i128',

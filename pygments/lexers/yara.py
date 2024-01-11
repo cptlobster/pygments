@@ -4,20 +4,20 @@
 
     Lexers for YARA.
 
-    :copyright: Copyright 2006-2023 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2024 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
 from pygments.lexer import RegexLexer, words
-from pygments.token import Comment, String, Name, Text, Punctuation, Operator, Keyword, Whitespace, Number, Generic
+from pygments.token import Comment, String, Name, Text, Punctuation, \
+    Operator, Keyword, Whitespace, Number
 
 __all__ = ['YaraLexer']
+
 
 class YaraLexer(RegexLexer):
     """
     For YARA rules
-
-    .. versionadded:: 2.16.0
     """
 
     name = 'YARA'
@@ -25,6 +25,7 @@ class YaraLexer(RegexLexer):
     aliases = ['yara', 'yar']
     filenames = ['*.yar']
     mimetypes = ['text/x-yara']
+    version_added = '2.16'
 
     tokens = {
         'root': [
@@ -32,9 +33,21 @@ class YaraLexer(RegexLexer):
             (r'//.*?$', Comment.Single),
             (r'\#.*?$', Comment.Single),
             (r'/\*', Comment.Multiline, 'comment'),
-            (words(('rule', 'private', 'global', 'import', 'include'), prefix=r'\b', suffix=r'\b'), Keyword.Declaration),
-            (words(('strings', 'condition', 'meta'), prefix=r'\b', suffix=r'\b'), Keyword),
-            (words(('ascii', 'at', 'base64', 'base64wide', 'condition', 'contains', 'endswith', 'entrypoint', 'filesize', 'for', 'fullword', 'icontains', 'iendswith', 'iequals', 'in', 'include', 'int16', 'int16be', 'int32', 'int32be', 'int8', 'int8be', 'istartswith', 'matches', 'meta', 'nocase', 'none', 'of', 'startswith', 'strings', 'them', 'uint16', 'uint16be', 'uint32', 'uint32be', 'uint8', 'uint8be', 'wide', 'xor', 'defined'), prefix=r'\b', suffix=r'\b'), Name.Builtin),
+            (words(('rule', 'private', 'global', 'import', 'include'),
+                   prefix=r'\b', suffix=r'\b'),
+             Keyword.Declaration),
+            (words(('strings', 'condition', 'meta'), prefix=r'\b', suffix=r'\b'),
+             Keyword),
+            (words(('ascii', 'at', 'base64', 'base64wide', 'condition',
+                    'contains', 'endswith', 'entrypoint', 'filesize', 'for',
+                    'fullword', 'icontains', 'iendswith', 'iequals', 'in',
+                    'include', 'int16', 'int16be', 'int32', 'int32be', 'int8',
+                    'int8be', 'istartswith', 'matches', 'meta', 'nocase',
+                    'none', 'of', 'startswith', 'strings', 'them', 'uint16',
+                    'uint16be', 'uint32', 'uint32be', 'uint8', 'uint8be',
+                    'wide', 'xor', 'defined'),
+                   prefix=r'\b', suffix=r'\b'),
+             Name.Builtin),
             (r'(true|false)\b', Keyword.Constant),
             (r'(and|or|not|any|all)\b', Operator.Word),
             (r'(\$\w+)', Name.Variable),

@@ -4,7 +4,7 @@
 
     Base lexer classes.
 
-    :copyright: Copyright 2006-2023 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2024 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -67,9 +67,11 @@ class Lexer(metaclass=LexerMeta):
        :no-value:
     .. autoattribute:: priority
 
-    Lexers included in Pygments should have an additional attribute:
+    Lexers included in Pygments should have two additional attributes:
 
     .. autoattribute:: url
+       :no-value:
+    .. autoattribute:: version_added
        :no-value:
 
     Lexers included in Pygments may have additional attributes:
@@ -130,8 +132,11 @@ class Lexer(metaclass=LexerMeta):
     priority = 0
 
     #: URL of the language specification/definition. Used in the Pygments
-    #: documentation.
+    #: documentation. Set to an empty string to disable.
     url = None
+
+    #: Version of Pygments in which the lexer was added.
+    version_added = None
 
     #: Example file name. Relative to the ``tests/examplefiles`` directory.
     #: This is used by the documentation generator to show an example.
@@ -199,20 +204,9 @@ class Lexer(metaclass=LexerMeta):
         it's the same as if the return values was ``0.0``.
         """
 
-    def get_tokens(self, text, unfiltered=False):
-        """
-        This method is the basic interface of a lexer. It is called by
-        the `highlight()` function. It must process the text and return an
-        iterable of ``(tokentype, value)`` pairs from `text`.
+    def _preprocess_lexer_input(self, text):
+        """Apply preprocessing such as decoding the input, removing BOM and normalizing newlines."""
 
-        Normally, you don't need to override this method. The default
-        implementation processes the options recognized by all lexers
-        (`stripnl`, `stripall` and so on), and then yields all tokens
-        from `get_tokens_unprocessed()`, with the ``index`` dropped.
-
-        If `unfiltered` is set to `True`, the filtering mechanism is
-        bypassed even if filters are defined.
-        """
         if not isinstance(text, str):
             if self.encoding == 'guess':
                 text, _ = guess_decode(text)
@@ -254,6 +248,24 @@ class Lexer(metaclass=LexerMeta):
             text = text.expandtabs(self.tabsize)
         if self.ensurenl and not text.endswith('\n'):
             text += '\n'
+
+        return text
+
+    def get_tokens(self, text, unfiltered=False):
+        """
+        This method is the basic interface of a lexer. It is called by
+        the `highlight()` function. It must process the text and return an
+        iterable of ``(tokentype, value)`` pairs from `text`.
+
+        Normally, you don't need to override this method. The default
+        implementation processes the options recognized by all lexers
+        (`stripnl`, `stripall` and so on), and then yields all tokens
+        from `get_tokens_unprocessed()`, with the ``index`` dropped.
+
+        If `unfiltered` is set to `True`, the filtering mechanism is
+        bypassed even if filters are defined.
+        """
+        text = self._preprocess_lexer_input(text)
 
         def streamer():
             for _, t, v in self.get_tokens_unprocessed(text):
@@ -539,7 +551,7 @@ class RegexLexerMeta(LexerMeta):
 
     def _process_state(cls, unprocessed, processed, state):
         """Preprocess a single state definition."""
-        assert type(state) is str, "wrong state name %r" % state
+        assert isinstance(state, str), "wrong state name %r" % state
         assert state[0] != '#', "invalid state name %r" % state
         if state in processed:
             return processed[state]
